@@ -25,20 +25,16 @@ namespace GenMatrix
 
     public class All_Matrix
     {
-        // Статическое поле для хранения единственного экземпляра класса
         private static All_Matrix _instance;
         private static readonly object _lock = new object();
 
-        // Список матриц
         private List<Matrix_> matrixes;
 
-        // Приватный конструктор, чтобы предотвратить создание экземпляров класса извне
         private All_Matrix()
         {
             matrixes = new List<Matrix_>();
         }
 
-        // Публичное статическое свойство для получения экземпляра класса
         public static All_Matrix Instance
         {
             get
@@ -56,14 +52,12 @@ namespace GenMatrix
 
         public List<Matrix_> get_matrixes() { return matrixes; }
 
-        // Метод для добавления матрицы
         public void Add(Matrix_ matrix)
         {
             if (matrix == null) return;
             matrixes.Add(matrix);
         }
 
-        // Метод для печати всех имен матриц
         public string PrintAll()
         {
             StringBuilder result = new StringBuilder();
