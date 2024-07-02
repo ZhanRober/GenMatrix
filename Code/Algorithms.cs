@@ -47,10 +47,8 @@ namespace GenMatrix
 
         public void NewGen()
         {
-            //для теста скрещивания
             int ind = random.Next(0,chromosomes.Count-1);
             Crossing(chromosomes[ind], chromosomes[ind+1]);
-            //Console.WriteLine(ind.ToString());
         }
 
         private void Crossing(Chromosome first, Chromosome second)
@@ -78,16 +76,13 @@ namespace GenMatrix
             int size = element.chromosome.Count;
             HashSet<int> newPartSet = new HashSet<int>(newPart);
 
-            // Создаем список потомка
             List<int> offspring = new List<int>(new int[size]);
 
-            // Вставляем подсписок
             for (int i = 0; i < newPart.Count; i++)
             {
                 offspring[start + i] = newPart[i];
             }
 
-            // Заполняем оставшиеся позиции элементами, которых нет в новом подсписке
             int currentPos = (start + newPart.Count) % size;
             for (int i = 0; i < size; i++)
             {
