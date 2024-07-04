@@ -12,14 +12,20 @@ namespace GenMatrix
         private static Random random = new Random();
         public List<int> chromosome;
         List<Matrix_> local_matrixes;
-        public int rating_int;
-        //double rating_double;
+        public double rating;
 
         public Chromosome()
         {
             chromosome = CreateChromosome();
             local_matrixes = new List<Matrix_>(All_Matrix.Instance.get_matrixes());
             CountRating();
+        }
+
+        public Chromosome(Chromosome parent)
+        {
+            this.chromosome = new List<int>(parent.chromosome);
+            this.local_matrixes = new List<Matrix_>(parent.local_matrixes);
+            this.rating = parent.rating;
         }
 
         private List<int> CreateChromosome()
@@ -37,15 +43,18 @@ namespace GenMatrix
             return result;
         }
 
-        private void CountRating()
+        public void CountRating()
         {
             List<int> copy = new List<int>(chromosome);
             List<Tuple<int, int>> list_matrix = All_Matrix.Instance.ListView();
+
             int ind_copy = 0;
+            rating = 0; 
+
             while(ind_copy<copy.Count)
             {
                 int ind = copy[ind_copy];
-                rating_int += list_matrix[ind - 1].Item1 * list_matrix[ind - 1].Item2 * list_matrix[ind].Item2;
+                rating += list_matrix[ind - 1].Item1 * list_matrix[ind - 1].Item2 * list_matrix[ind].Item2;
                 list_matrix[ind - 1] = new Tuple<int,int>(list_matrix[ind-1].Item1,list_matrix[ind].Item2);
                 list_matrix.RemoveAt(ind);
                 EditChromosome(copy, ind);

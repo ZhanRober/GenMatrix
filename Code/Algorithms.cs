@@ -5,18 +5,22 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Numerics;
 using System.Drawing;
+using System.Xml.Linq;
+using System.Runtime.ExceptionServices;
 
 namespace GenMatrix
 {
     public class Algorithms
     {
         public List<Chromosome> chromosomes;
-        int sum;
+        public double sum;
+        double sum_ratings;
         List<double> probability;
-        private static Random random = new Random();
+        List<double> sequential_probability;
+        private Random random = new Random();
 
 
-        public Algorithms() 
+        public Algorithms()
         {
             chromosomes = new List<Chromosome>();
             for (int i = 0; i < Parametres.Instance.PopulationSize; i++)
@@ -24,31 +28,83 @@ namespace GenMatrix
                 var element = new Chromosome();
                 chromosomes.Add(element);
             }
-            FillProbability();
         }
 
         private void FillProbability()
         {
             probability = new List<double>();
+            sequential_probability = new List<double>();
+            sum_ratings = 0;
+
             CalculateSum();
-            foreach (var chromosome in chromosomes)
+            CountShare();
+            for (int i = 0; i < chromosomes.Count; i++)
             {
-                probability.Add(Math.Round((double)chromosome.rating_int / (double)sum, 2));
+                chromosomes[i].rating = Math.Round(1 / probability[i], 2);
             }
+            probability.Clear();
+            CalculateSum();
+            CountShare();
+            CountSequentialProbability();
         }
-        
-        private void CalculateSum()
+
+        private void CountSequentialProbability()
+        {
+            for (int i = 0; i < probability.Count; i++)
+            {
+                sum_ratings += probability[i];
+                sequential_probability.Add(Math.Round(sum_ratings,2));
+            }
+            sum_ratings = Math.Round(sum_ratings,2);
+        }
+
+        private void CountShare()
         {
             foreach (var chromosome in chromosomes)
             {
-                sum += chromosome.rating_int; 
+                probability.Add(Math.Round((double)chromosome.rating / (double)sum, 2));
             }
+        }
+
+        public void CalculateSum()
+        {
+            sum = 0;
+            foreach (var chromosome in chromosomes)
+            {
+                sum += chromosome.rating;
+            }
+            sum = Math.Round(sum, 2);
         }
 
         public void NewGen()
         {
-            int ind = random.Next(0,chromosomes.Count-1);
-            Crossing(chromosomes[ind], chromosomes[ind+1]);
+            FillProbability();
+            List<Chromosome> new_gen = new List<Chromosome>();
+            while (new_gen.Count < chromosomes.Count)
+            {
+                new_gen.Add(Selection());
+            }
+            chromosomes.Clear();
+            bool fl = false;
+            while (new_gen.Count!=0)
+            {
+                if (new_gen.Count == 1)
+                {
+                    chromosomes.Add(Mutation(new Chromosome(new_gen[0])));
+                    new_gen.Remove(new_gen[0]);
+                }
+                else
+                {
+                    Tuple<Chromosome, Chromosome> childs = GetPair(new_gen, fl);
+                    if (fl && Math.Round(random.NextDouble(), 2) <= Parametres.Instance.CrossoverRate)
+                    {
+                        Crossing(childs.Item1, childs.Item2);
+                    }
+                    chromosomes.Add(Mutation(new Chromosome(childs.Item1)));
+                    chromosomes.Add(Mutation(new Chromosome(childs.Item2)));
+                }
+            }
+            CalculateSum();
         }
 
         private void Crossing(Chromosome first, Chromosome second)
@@ -59,7 +115,7 @@ namespace GenMatrix
             while (true)
             {
                 first_ind = random.Next(0, first.chromosome.Count / 2);
-                second_ind = random.Next(first_ind+1, first.chromosome.Count);
+                second_ind = random.Next(first_ind + 1, first.chromosome.Count);
                 if (second_ind - first_ind != first.chromosome.Count - 1)
                 {
                     part_first = first.chromosome.GetRange(first_ind, second_ind);
@@ -95,6 +151,76 @@ namespace GenMatrix
             }
 
             element.chromosome = offspring;
+        }
+
+        private Chromosome Selection()
+        {
+            double element = Math.Round(random.NextDouble() * sum_ratings,2);
+            var ind = 0;
+            foreach (double i in sequential_probability)
+            {
+                if (i > element) break;
+                ind++;
+            }
+            if (ind == chromosomes.Count) ind--;
+            
+            return new Chromosome(chromosomes[ind]);
+        }
+
+        private Tuple<Chromosome, Chromosome> GetPair(List<Chromosome> newchrome, bool fl)
+        {
+            Chromosome first = new Chromosome(newchrome[0]);
+            Chromosome second = null;
+            fl = false;
+            int ind = 1;
+            for (int i = 1; i<newchrome.Count; i++)
+            {
+                if (first.chromosome == newchrome[i].chromosome)
+                {
+                    for (int j = i + 1; j < newchrome.Count; j++)
+                    {
+                        if (first.chromosome != newchrome[j].chromosome)
+                        {
+                            second = new Chromosome(newchrome[j]);
+                            ind = j;
+                            fl = true;
+                        }
+                    }
+                }
+                else
+                {
+                    second = new Chromosome(newchrome[i]);
+                    ind = i;
+                    fl = true;
+                }
+                if (fl) break;
+            }
+            if (!fl)
+            {
+                second = new Chromosome(newchrome[1]);
+                ind = 1;
+            }
+            newchrome.Remove(newchrome[ind]);
+            newchrome.Remove(newchrome[0]);
+            return new Tuple<Chromosome,Chromosome>(first, second);
+        }
+
+        private Chromosome Mutation(Chromosome item)
+        {
+            //Chromosome item = new Chromosome(element);
+
+            if (Math.Round(random.NextDouble(), 2) <= Parametres.Instance.MutationRate)
+            {
+                for (int i = item.chromosome.Count - 1; i >= 1; i--)
+                {
+                    int j = random.Next(i + 1);
+                    var tmp = item.chromosome[j];
+                    item.chromosome[j] = item.chromosome[i];
+                    item.chromosome[i] = tmp;
+                }
+            }
+            item.CountRating();
+            return item;
         }
     }
 }

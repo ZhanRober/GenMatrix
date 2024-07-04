@@ -42,7 +42,7 @@
             this.richTextBox1.BackColor = System.Drawing.SystemColors.ScrollBar;
             this.richTextBox1.Location = new System.Drawing.Point(17, 143);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(560, 507);
+            this.richTextBox1.Size = new System.Drawing.Size(725, 507);
             this.richTextBox1.TabIndex = 0;
             this.richTextBox1.Text = "";
             // 
@@ -68,17 +68,18 @@
             // Graphic
             // 
             this.Graphic.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Graphic.Location = new System.Drawing.Point(754, 480);
+            this.Graphic.Location = new System.Drawing.Point(822, 469);
             this.Graphic.Name = "Graphic";
             this.Graphic.Size = new System.Drawing.Size(183, 63);
             this.Graphic.TabIndex = 2;
             this.Graphic.Text = "График";
             this.Graphic.UseVisualStyleBackColor = true;
+            this.Graphic.Click += new System.EventHandler(this.Graphic_Click);
             // 
             // Next
             // 
             this.Next.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Next.Location = new System.Drawing.Point(754, 237);
+            this.Next.Location = new System.Drawing.Point(822, 228);
             this.Next.Name = "Next";
             this.Next.Size = new System.Drawing.Size(183, 63);
             this.Next.TabIndex = 4;
@@ -89,12 +90,13 @@
             // Finish
             // 
             this.Finish.Font = new System.Drawing.Font("Times New Roman", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Finish.Location = new System.Drawing.Point(754, 358);
+            this.Finish.Location = new System.Drawing.Point(822, 346);
             this.Finish.Name = "Finish";
             this.Finish.Size = new System.Drawing.Size(183, 63);
             this.Finish.TabIndex = 5;
             this.Finish.Text = "В конец";
             this.Finish.UseVisualStyleBackColor = true;
+            this.Finish.Click += new System.EventHandler(this.Finish_Click);
             // 
             // Procces
             // 
