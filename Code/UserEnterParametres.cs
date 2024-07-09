@@ -8,6 +8,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace GenMatrix
 {
@@ -20,14 +21,51 @@ namespace GenMatrix
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Parametres.Instance.PopulationSize = int.Parse(this.PopulationSize.Text.Replace(" ", ""));
-            Parametres.Instance.NumberOfGeneration = int.Parse(this.NumberOfGeneration.Text.Replace(" ", ""));
-            Parametres.Instance.CrossoverRate = double.Parse(this.CrossoverRate.Text.Replace(" ", ""), CultureInfo.InvariantCulture);
-            Parametres.Instance.MutationRate = double.Parse(this.MutationRate.Text.Replace(" ", ""), CultureInfo.InvariantCulture);
+            if (int.TryParse(this.PopulationSize.Text.Replace(" ", ""), out int populationSize))
+            {
+                Parametres.Instance.PopulationSize = populationSize;
+            }
+            else
+            {
+                MessageBox.Show("Некорректное значение для PopulationSize", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (int.TryParse(this.NumberOfGeneration.Text.Replace(" ", ""), out int numberOfGeneration))
+            {
+                Parametres.Instance.NumberOfGeneration = numberOfGeneration;
+            }
+            else
+            {
+                MessageBox.Show("Некорректное значение для NumberOfGeneration", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (double.TryParse(this.CrossoverRate.Text.Replace(" ", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out double crossoverRate ) && crossoverRate >= 0 && crossoverRate < 1)
+            {
+                Parametres.Instance.CrossoverRate = crossoverRate;
+            }
+            else
+            {
+                MessageBox.Show("Некорректное значение для CrossoverRate", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            if (double.TryParse(this.MutationRate.Text.Replace(" ", ""), NumberStyles.Any, CultureInfo.InvariantCulture, out double mutationRate) && mutationRate>=0 && mutationRate<1)
+            {
+                Parametres.Instance.MutationRate = mutationRate;
+            }
+            else
+            {
+                MessageBox.Show("Некорректное значение для MutationRate", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
             var window = new Procces();
             window.Owner = this;
             window.Show();
             this.Hide();
         }
+
+        
     }
 }

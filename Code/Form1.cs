@@ -34,9 +34,10 @@ namespace GenMatrix
 
         private void RandomInput_Click(object sender, EventArgs e)
         {
-            //var window = new Procces();
-            //window.Owner = this;
-            //window.Show();
+            var rand = new Generation();
+            var window = new Procces();
+            window.Owner = this;
+            window.Show();
         }
     }
 }

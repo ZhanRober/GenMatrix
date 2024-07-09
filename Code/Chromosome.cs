@@ -46,19 +46,25 @@ namespace GenMatrix
         public void CountRating()
         {
             List<int> copy = new List<int>(chromosome);
-            List<Tuple<int, int>> list_matrix = All_Matrix.Instance.ListView();
+            List<Tuple<int, int>> originalListMatrix = All_Matrix.Instance.ListView();
+            List<Tuple<int, int>> listMatrix = new List<Tuple<int, int>>();
 
-            int ind_copy = 0;
-            rating = 0; 
-
-            while(ind_copy<copy.Count)
+            foreach (var matrix in originalListMatrix)
             {
-                int ind = copy[ind_copy];
-                rating += list_matrix[ind - 1].Item1 * list_matrix[ind - 1].Item2 * list_matrix[ind].Item2;
-                list_matrix[ind - 1] = new Tuple<int,int>(list_matrix[ind-1].Item1,list_matrix[ind].Item2);
-                list_matrix.RemoveAt(ind);
+                listMatrix.Add(new Tuple<int, int>(matrix.Item1, matrix.Item2));
+            }
+
+            int indCopy = 0;
+            rating = 0;
+
+            while (indCopy < copy.Count)
+            {
+                int ind = copy[indCopy];
+                rating += listMatrix[ind - 1].Item1 * listMatrix[ind - 1].Item2 * listMatrix[ind].Item2;
+                listMatrix[ind - 1] = new Tuple<int, int>(listMatrix[ind - 1].Item1, listMatrix[ind].Item2);
+                listMatrix.RemoveAt(ind);
                 EditChromosome(copy, ind);
-                ind_copy++;
+                indCopy++;
             }
         }
 

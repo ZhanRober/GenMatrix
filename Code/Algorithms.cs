@@ -207,7 +207,6 @@ namespace GenMatrix
 
         private Chromosome Mutation(Chromosome item)
         {
-            //Chromosome item = new Chromosome(element);
 
             if (Math.Round(random.NextDouble(), 2) <= Parametres.Instance.MutationRate)
             {
